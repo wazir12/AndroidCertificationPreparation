@@ -12,9 +12,11 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,6 +29,10 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
 implements NavigationView.OnNavigationItemSelectedListener {
     private  NoteRecyclerAdapter recyclerAdapter;
+    private LinearLayoutManager notesLinearLayoutManager;
+    private RecyclerView recycler_view;
+    private CourseRecyclerAdapter coursesRecyclerAdapter;
+    private GridLayoutManager gridLayoutManager;
 
     //private ArrayAdapter<NoteInfo> mAdapterNotes;
     @Override
@@ -81,15 +87,37 @@ implements NavigationView.OnNavigationItemSelectedListener {
            // }
         //});
 
-        final RecyclerView recycler_notes = (RecyclerView) findViewById(R.id.list_notes);
-        LinearLayoutManager notesLinearLayoutManager = new LinearLayoutManager(this);
-        recycler_notes.setLayoutManager(notesLinearLayoutManager);
+        recycler_view = (RecyclerView) findViewById(R.id.list_notes);
+        notesLinearLayoutManager = new LinearLayoutManager(this);
+        gridLayoutManager = new GridLayoutManager(this,2);
+
         List<NoteInfo> notes = DataManager.getInstance().getNotes();
         recyclerAdapter =new NoteRecyclerAdapter(this, notes);
-        recycler_notes.setAdapter(recyclerAdapter);
+        displayNotes(recycler_view);
+        List<CourseInfo> courses = DataManager.getInstance().getCourses();
+        coursesRecyclerAdapter = new CourseRecyclerAdapter(this,courses);
 
 
     }
+    private void displayCourses(){
+        recycler_view.setLayoutManager(gridLayoutManager);
+        recycler_view.setAdapter(coursesRecyclerAdapter);
+        selectNavigationMenuItem(R.id.nav_courses);
+
+    }
+
+    private void displayNotes(RecyclerView recycler_notes) {
+        recycler_notes.setLayoutManager(notesLinearLayoutManager);
+        recycler_notes.setAdapter(recyclerAdapter);
+        selectNavigationMenuItem(R.id.nav_notes);
+    }
+
+    private void selectNavigationMenuItem(int id) {
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        Menu menu = navigationView.getMenu();
+        menu.findItem(id).setChecked(true);
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -106,11 +134,11 @@ implements NavigationView.OnNavigationItemSelectedListener {
         int id = menuItem.getItemId();
 
         if (id == R.id.nav_notes) {
-            handleSelection("Notes");
-           /// displayNotes();
+            //handleSelection("Notes");
+           displayNotes(recycler_view);
         } else if (id == R.id.nav_courses) {
-            handleSelection("Courses");
-            //displayCourses();
+            //handleSelection("Courses");
+            displayCourses();
         } else if (id == R.id.nav_share) {
            handleSelection("Don't you think you've shared enough");
         } else if (id == R.id.nav_send) {
