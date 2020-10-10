@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -14,6 +15,15 @@ import android.widget.Spinner;
 import java.util.List;
 
 public class NoteActivity extends AppCompatActivity {
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_next);
+        int lastIndex = DataManager.getInstance().getNotes().size() - 1;
+        item.setEnabled(lastIndex>mNotePosition);
+        return super.onPrepareOptionsMenu(menu);
+
+    }
+
     private final String TAG = getClass().getSimpleName();
     public static final String NOTE_POSITION = "com.jwhh.jim.notekeeper.NOTE_POSITION";
     public static final String ORIGINAL_NOTE_COURSE_ID = "com.jwhh.jim.notekeeper.ORIGINAL_NOTE_COURSE_ID";
@@ -30,6 +40,8 @@ public class NoteActivity extends AppCompatActivity {
     private String mOriginalNoteCourseId;
     private String mOriginalNoteTitle;
     private String mOriginalNoteText;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,8 +173,22 @@ public class NoteActivity extends AppCompatActivity {
             mIsCancelling = true;
             finish();
         }
+        else if (id == R.id.action_next){
+            moveNext();
+        }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void moveNext() {
+        saveNote();
+
+        ++mNotePosition;
+        mNote = DataManager.getInstance().getNotes().get(mNotePosition);
+
+        saveOriginalNoteValues();
+        displayNote(mSpinnerCourses,mTextNoteTitle,mTextNoteText);
+        invalidateOptionsMenu();
     }
 
     private void sendEmail() {
