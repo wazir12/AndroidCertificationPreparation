@@ -10,8 +10,8 @@ public final class NoteDatabase {
 
         public static final String  CREATE_TABLE_QUERY =
                 "CREATE TABLE "+TABLE_NAME+"( "
-                +COLUMN_COURSE_ID+", "
-                        +COLUMN_COURSE_TITLE+")";
+                +COLUMN_COURSE_ID+" TEXT UNIQUE NOT NULL"+", "
+                        +COLUMN_COURSE_TITLE+" TEXT NOT NULL"+")";
 
 
 
@@ -26,9 +26,9 @@ public final class NoteDatabase {
 
         public static final String CREATE_TABLE_QUERY =
                 "CREATE TABLE "+TABLE_NAME+"( "
-                        +COLUMN_NOTE_ID+", "
-                        +COLUMN_NOTE_TITLE+", "
-                        +COLUMN_NOTE_TEXT
+                        +COLUMN_NOTE_ID+" TEXT  NOT NULL"+", "
+                        +COLUMN_NOTE_TITLE+" TEXT NOT NULL"+", "
+                        +COLUMN_NOTE_TEXT+ " TEXT"
                         +")";
 
     }
