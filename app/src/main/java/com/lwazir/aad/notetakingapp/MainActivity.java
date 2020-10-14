@@ -128,6 +128,8 @@ public class MainActivity extends AppCompatActivity
            // }
         //});
 
+        //TODO: Loading Data from DB
+        DataManager.loadFromDatabase(mDbOpenHelper);
         recycler_view = (RecyclerView) findViewById(R.id.list_notes);
         notesLinearLayoutManager = new LinearLayoutManager(this);
         gridLayoutManager = new GridLayoutManager(this,getResources().getInteger(R.integer.courses_grid_span));
@@ -150,7 +152,7 @@ public class MainActivity extends AppCompatActivity
     private void displayNotes(RecyclerView recycler_notes) {
         recycler_notes.setLayoutManager(notesLinearLayoutManager);
         recycler_notes.setAdapter(recyclerAdapter);
-        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
+        //SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
         selectNavigationMenuItem(R.id.nav_notes);
     }
 
