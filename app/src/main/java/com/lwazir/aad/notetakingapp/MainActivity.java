@@ -4,11 +4,14 @@ package com.lwazir.aad.notetakingapp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.lwazir.aad.notetakingapp.SQLiteDB.NoteKeeperOpenHelper;
+
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity
     private  NoteRecyclerAdapter recyclerAdapter;
     private LinearLayoutManager notesLinearLayoutManager;
     private RecyclerView recycler_view;
+    private NoteKeeperOpenHelper mDbOpenHelper;
     private CourseRecyclerAdapter coursesRecyclerAdapter;
     private GridLayoutManager gridLayoutManager;
 
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mDbOpenHelper = new NoteKeeperOpenHelper(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -145,6 +150,7 @@ public class MainActivity extends AppCompatActivity
     private void displayNotes(RecyclerView recycler_notes) {
         recycler_notes.setLayoutManager(notesLinearLayoutManager);
         recycler_notes.setAdapter(recyclerAdapter);
+        SQLiteDatabase db = mDbOpenHelper.getReadableDatabase();
         selectNavigationMenuItem(R.id.nav_notes);
     }
 
@@ -184,6 +190,13 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        mDbOpenHelper.close();
+        super.onDestroy();
+
     }
 
     private void handleSelection(String message) {
