@@ -32,19 +32,21 @@ public class DataManager {
                 CourseInfoEntry.COLUMN_COURSE_ID,
                 CourseInfoEntry.COLUMN_COURSE_TITLE};
 
-       final Cursor courseCursor = db.query(CourseInfoEntry.TABLE_NAME, courseColumns, null, null, null, null, null);
+       final Cursor courseCursor = db.query(CourseInfoEntry.TABLE_NAME, courseColumns, null, null, null, null,
+               CourseInfoEntry.COLUMN_COURSE_TITLE+" DESC");
         loadCoursesFromDb(courseCursor);
         final String[] notesColumns = {
-                NoteInfoEntry.COLUMN_NOTE_ID,
+                NoteInfoEntry.COLUMN_COURSE_ID,
                 NoteInfoEntry.COLUMN_NOTE_TITLE,
                 NoteInfoEntry.COLUMN_NOTE_TEXT
         };
-        final Cursor noteCursor = db.query(NoteInfoEntry.TABLE_NAME, notesColumns, null, null, null, null, null);
+        String noteOrderBy = NoteInfoEntry.COLUMN_COURSE_ID + "," + NoteInfoEntry.COLUMN_NOTE_TITLE;
+        final Cursor noteCursor = db.query(NoteInfoEntry.TABLE_NAME, notesColumns, null, null, null, null, noteOrderBy);
         loadNotesfromDb(noteCursor);
     }
 
     private static void loadNotesfromDb(Cursor noteCursor) {
-        int noteIdPos = noteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_ID);
+        int noteIdPos = noteCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
         int noteTitlePos = noteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
         int noteTextPos = noteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TEXT);
 
