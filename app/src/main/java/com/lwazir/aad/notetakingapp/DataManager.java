@@ -2,6 +2,7 @@ package com.lwazir.aad.notetakingapp;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.lwazir.aad.notetakingapp.SQLiteDB.NoteDatabase;
 import com.lwazir.aad.notetakingapp.SQLiteDB.NoteDatabase.CourseInfoEntry;
@@ -36,6 +37,7 @@ public class DataManager {
                CourseInfoEntry.COLUMN_COURSE_TITLE+" DESC");
         loadCoursesFromDb(courseCursor);
         final String[] notesColumns = {
+                NoteInfoEntry._ID,
                 NoteInfoEntry.COLUMN_COURSE_ID,
                 NoteInfoEntry.COLUMN_NOTE_TITLE,
                 NoteInfoEntry.COLUMN_NOTE_TEXT
@@ -46,20 +48,22 @@ public class DataManager {
     }
 
     private static void loadNotesfromDb(Cursor noteCursor) {
-        int noteIdPos = noteCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
+        int courseIdPos = noteCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
         int noteTitlePos = noteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
         int noteTextPos = noteCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TEXT);
-
+        int idPos = noteCursor.getColumnIndex(NoteInfoEntry._ID);
+        Log.d("Columns:",noteCursor.getColumnNames().toString());
         DataManager dm = getInstance();
         dm.mNotes.clear();
 
         while(noteCursor.moveToNext()){
-            String noteId = noteCursor.getString(noteIdPos);
+            String courseId = noteCursor.getString(courseIdPos);
             String noteTitle = noteCursor.getString(noteTitlePos);
             String noteTxt = noteCursor.getString(noteTextPos);
+            int id = noteCursor.getInt(idPos);
 
-            CourseInfo  noteCourse = dm.getCourse(noteId);
-            NoteInfo notes = new NoteInfo(noteCourse,noteTitle,noteTxt);
+            CourseInfo  noteCourse = dm.getCourse(courseId);
+            NoteInfo notes = new NoteInfo(noteCourse,noteTitle,noteTxt,id);
             dm.mNotes.add(notes);
         }
         noteCursor.close();
