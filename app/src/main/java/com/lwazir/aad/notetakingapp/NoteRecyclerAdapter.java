@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +17,30 @@ import java.util.List;
 public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.CustomViewHolder> {
     private final LayoutInflater layoutInflator;
     private final Context mContext;
-    List<NoteInfo> mNotes;
-    public NoteRecyclerAdapter(Context context, List<NoteInfo> notes) {
+   // List<NoteInfo> mNotes;
+    private Cursor mCursor;
+    public NoteRecyclerAdapter(Context context, Cursor cursor) {
         mContext = context;
         layoutInflator = LayoutInflater.from(context);
-        mNotes = notes;
+        mCursor = cursor;
+
+        populateColumnPositions();
+    }
+
+    private  void changeCursor(Cursor cursor){
+        if(mCursor!=null){
+            mCursor.close();
+        }
+        mCursor = cursor;
+        populateColumnPositions();
+        notifyDataSetChanged();
+    }
+    private void populateColumnPositions() {
+        if(mCursor == null){
+            return;
+        }else{
+            //get Column Indexes from cursor
+        }
     }
 
     @NonNull
