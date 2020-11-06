@@ -12,13 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.List;
+import com.lwazir.aad.notetakingapp.SQLiteDB.NoteDatabase.NoteInfoEntry;
 
 public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapter.CustomViewHolder> {
     private final LayoutInflater layoutInflator;
     private final Context mContext;
    // List<NoteInfo> mNotes;
     private Cursor mCursor;
+    private int mCoursePos;
+    private int mNoteTitlePos;
+    private int mIdPos;
+
     public NoteRecyclerAdapter(Context context, Cursor cursor) {
         mContext = context;
         layoutInflator = LayoutInflater.from(context);
@@ -27,20 +31,22 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
         populateColumnPositions();
     }
 
-    private  void changeCursor(Cursor cursor){
-        if(mCursor!=null){
+    public void changeCursor(Cursor cursor){
+        if(mCursor != null)
             mCursor.close();
-        }
         mCursor = cursor;
         populateColumnPositions();
         notifyDataSetChanged();
     }
     private void populateColumnPositions() {
-        if(mCursor == null){
+        if(mCursor == null)
             return;
-        }else{
-            //get Column Indexes from cursor
-        }
+
+        //get Column Indexes from cursor
+        mCoursePos = mCursor.getColumnIndex(NoteInfoEntry.COLUMN_COURSE_ID);
+        mNoteTitlePos = mCursor.getColumnIndex(NoteInfoEntry.COLUMN_NOTE_TITLE);
+        mIdPos = mCursor.getColumnIndex(NoteInfoEntry._ID);
+
     }
 
     @NonNull
@@ -51,16 +57,21 @@ public class NoteRecyclerAdapter extends RecyclerView.Adapter<NoteRecyclerAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CustomViewHolder customViewHolder, @SuppressLint("RecyclerView") int i) {
-            NoteInfo note =  mNotes.get(i);
-            customViewHolder.courseTextView.setText(note.getCourse().getTitle());
-            customViewHolder.titleTxtView.setText(note.getTitle());
-            customViewHolder.mId = note.getId();
+    public void onBindViewHolder(@NonNull CustomViewHolder holder, @SuppressLint("RecyclerView") int i) {
+           // NoteInfo note =  mNotes.get(i);
+        mCursor.moveToPosition(i);
+        String course = mCursor.getString(mCoursePos);
+        String noteTitle = mCursor.getString(mNoteTitlePos);
+        int id = mCursor.getInt(mIdPos);
+
+        holder.courseTextView.setText(course);
+        holder.titleTxtView.setText(noteTitle);
+        holder.mId = id;
     }
 
     @Override
     public int getItemCount() {
-        return mNotes.size();
+        return mCursor == null ? 0 : mCursor.getCount();
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
