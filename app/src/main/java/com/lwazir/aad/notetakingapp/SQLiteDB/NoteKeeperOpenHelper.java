@@ -6,10 +6,13 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import com.lwazir.aad.notetakingapp.SQLiteDB.NoteDatabase.CourseInfoEntry;
+import com.lwazir.aad.notetakingapp.SQLiteDB.NoteDatabase.NoteInfoEntry;
+
 public class NoteKeeperOpenHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME ="NoteDatabase.db";
-    public static final int DATABASE_VERSION =1;
+    public static final int DATABASE_VERSION = 2;
 
     public NoteKeeperOpenHelper(@Nullable Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -17,8 +20,11 @@ public class NoteKeeperOpenHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(NoteDatabase.CourseInfoEntry.SQL_CREATE_TABLE);
-        sqLiteDatabase.execSQL(NoteDatabase.NoteInfoEntry.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(CourseInfoEntry.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(NoteInfoEntry.SQL_CREATE_TABLE);
+
+        sqLiteDatabase.execSQL(CourseInfoEntry.SQL_CREATE_INDEX);
+        sqLiteDatabase.execSQL(NoteInfoEntry.SQL_CREATE_INDEX);
         //Adding Sample Data
         DatabaseDataWorker worker = new DatabaseDataWorker(sqLiteDatabase);
         worker.insertCourses();
@@ -26,7 +32,11 @@ public class NoteKeeperOpenHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        if (oldVersion < 2) {
+            sqLiteDatabase.execSQL(CourseInfoEntry.SQL_CREATE_INDEX);
+            sqLiteDatabase.execSQL(NoteInfoEntry.SQL_CREATE_INDEX);
 
+        }
     }
 }
